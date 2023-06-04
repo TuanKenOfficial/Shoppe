@@ -4,21 +4,27 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 
 import com.example.shoppe.R;
+import com.example.shoppe.activities.toast.Utils;
 import com.example.shoppe.databinding.ActivityMainBinding;
 import com.example.shoppe.fragments.ChatsFragment;
 import com.example.shoppe.fragments.HomeFragment;
 import com.example.shoppe.fragments.NotificationFragment;
 import com.example.shoppe.fragments.ProfileFragment;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         showHomeFragment(); //Home Fragment
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        if (firebaseAuth.getCurrentUser() == null){
+            startActivity(new Intent(this, LoginOptionActivity.class));
+        }
 
 
         binding.bottomNv.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -41,18 +52,43 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if (itemId == R.id.menu_chat){
                     //Home item click, Fragment Chat
-                    showChatsFragment();
-                    return true;
+                    if (firebaseAuth.getCurrentUser() == null){
+                        Utils.toast(MainActivity.this,"Bạn chưa đăng nhập");
+                        startActivity(new Intent(MainActivity.this,LoginOptionActivity.class));
+                        return false;
+                    }
+                    else{
+                        showChatsFragment();
+
+                        return true;
+                    }
+
                 }
                 else if (itemId == R.id.menu_fav){
                     //Home item click, Fragment Navigition
-                    showFavFragment();
-                    return true;
+                    if (firebaseAuth.getCurrentUser() == null){
+                        Utils.toast(MainActivity.this,"Bạn chưa đăng nhập");
+                        startActivity(new Intent(MainActivity.this,LoginOptionActivity.class));
+                        return false;
+                    }
+                    else{
+                        showFavFragment();
+                        return true;
+                    }
+
                 }
                 else if (itemId == R.id.menu_person){
                     //Home item click, Fragment Profile
-                    showProfileFragment();
-                    return true;
+                    if (firebaseAuth.getCurrentUser() == null){
+                        Utils.toast(MainActivity.this,"Bạn chưa đăng nhập");
+                        startActivity(new Intent(MainActivity.this,LoginOptionActivity.class));
+                        return false;
+                    }
+                    else{
+                        showProfileFragment();
+                        return true;
+                    }
+
                 }
                 else {
 

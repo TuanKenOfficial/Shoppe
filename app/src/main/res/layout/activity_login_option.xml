@@ -7,12 +7,12 @@
     tools:context=".activities.LoginOptionActivity">
 
     <ImageButton
+        android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_close"
+        android:src="@drawable/close"
         android:background="@android:color/transparent"
-        android:padding="10dp"/>
-    <ScrollView
+        android:padding="10dp"/>    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -35,6 +35,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Đăng nhập với Google"
+                android:layout_marginTop="30dp"
+                android:minHeight="@dimen/m_button_height"
+                android:textColor="@color/colorAccent"
+                android:background="@drawable/shape_button01"
+                app:cornerRadius="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loginEmailBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/colorAccent"
+                android:background="@drawable/shape_button01"
+                android:text="Đăng nhập Email"
+                android:minHeight="@dimen/m_button_height"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loginPhoneBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/m_button_height"
+                android:background="@drawable/shape_button01"
+                android:text="Đăng nhập với Số điện thoại"
+                android:gravity="center"
+                android:textColor="@color/colorAccent"
+                android:layout_marginTop="20dp"
                 app:cornerRadius="8dp"/>
 
         </LinearLayout>

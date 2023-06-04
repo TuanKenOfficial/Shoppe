@@ -6,10 +6,11 @@
     tools:context=".fragments.ProfileFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-
+    <Button
+        android:id="@+id/dangxuat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Profile" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Đăng xuất" />
 
 </FrameLayout>

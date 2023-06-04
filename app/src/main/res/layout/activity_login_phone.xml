@@ -1,9 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginPhoneActivity">
+    tools:context=".activities.LoginPhoneActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/toolbarRl"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/m_toolbar_height">
+
+        <ImageButton
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back01"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbarTitleTv"
+            android:layout_centerInParent="true"
+            android:text="Login Phone"
+            style="@style/TextAppearance.MaterialComponents.Body1"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/gray02"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@id/toolbarRl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:id="@+id/profileIv"
+            android:layout_centerHorizontal="true"
+            android:background="@color/gray01"
+            android:src="@drawable/ic_profile"
+            app:shapeAppearanceOverlay="@style/ImageStyle_Circle"/>
+
+        <TextView
+            android:id="@+id/loginLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Mời bạn đăng nhập tài khoản"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/profileIv"
+            style="@style/TextAppearance.AppCompat.Body1"/>
+    
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/phoneInputRl"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/loginLabelTv"
+            android:visibility="visible">
+
+            <com.hbb20.CountryCodePicker
+                android:id="@+id/phoneCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
+                android:minWidth="55dp"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                app:ccp_autoDetectCountry="true"
+                app:ccp_contentColor="@color/black"
+                app:ccp_rememberLastSelection="true"
+                app:ccp_showFlag="false"
+                app:ccp_showNameCode="false"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/phoneTil"
+                android:layout_marginLeft="5dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/phoneCode"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:startIconDrawable="@drawable/ic_phone"
+                android:hint="Phone">
+                <EditText
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/phoneNumber"
+                    android:inputType="phone"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Send"
+                android:background="@drawable/shape_button01"
+                android:minHeight="@dimen/m_button_height"
+                android:layout_below="@id/phoneTil"
+                android:layout_marginTop="10dp"
+                android:id="@+id/btnSend"/>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/otpInputRl"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/loginLabelTv"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtOTP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OTP đang gửi đến SĐT"
+                android:layout_margin="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
+
+            <in.aabhasjindal.otptextview.OtpTextView
+                android:id="@+id/otp_view"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/txtOTP"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_centerInParent="true"
+                app:otp_box_background="@drawable/ic_check_box"
+                app:bar_enabled="true"
+                app:bar_height="2dp"
+                app:width="40dp"
+                app:height="40dp"
+                app:length="6"
+                app:otp=""
+                app:otp_text_size="28sp" />
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Veryfied"
+                android:background="@drawable/shape_button01"
+                android:minHeight="@dimen/m_button_height"
+                android:layout_below="@id/otp_view"
+                android:layout_marginTop="20dp"
+                android:id="@+id/btnVeryfied"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
