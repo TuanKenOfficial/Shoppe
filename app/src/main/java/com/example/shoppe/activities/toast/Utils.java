@@ -17,6 +17,9 @@ public class Utils {
         Toasty.error(context, message, Toast.LENGTH_SHORT, true).show(); // thông báo lỗi
     }
 
+    public static void toastyInfo(Context context, String message){
+        Toasty.info(context, message, Toast.LENGTH_SHORT, true).show();
+    }
     public static  long getTimestamp(){
         return System.currentTimeMillis();
     }

@@ -68,7 +68,7 @@
             android:id="@+id/phoneInputRl"
             android:layout_marginTop="15dp"
             android:layout_below="@id/loginLabelTv"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <com.hbb20.CountryCodePicker
                 android:id="@+id/phoneCode"
@@ -124,32 +124,38 @@
             android:id="@+id/otpInputRl"
             android:layout_marginTop="15dp"
             android:layout_below="@id/loginLabelTv"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/txtOTP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:text="OTP đang gửi đến SĐT"
-                android:layout_margin="10dp"
-                android:textSize="18sp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:textSize="18sp" />
 
             <in.aabhasjindal.otptextview.OtpTextView
                 android:id="@+id/otp_view"
                 android:layout_width="wrap_content"
-                android:layout_below="@id/txtOTP"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_below="@id/txtOTP"
                 android:layout_centerInParent="true"
-                app:otp_box_background="@drawable/ic_check_box"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
                 app:bar_enabled="true"
                 app:bar_height="2dp"
-                app:width="40dp"
                 app:height="40dp"
                 app:length="6"
                 app:otp=""
-                app:otp_text_size="28sp" />
+                app:otp_box_background="@drawable/ic_check_box"
+                app:otp_text_size="28sp"
+                app:width="40dp" />
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -159,6 +165,16 @@
                 android:layout_below="@id/otp_view"
                 android:layout_marginTop="20dp"
                 android:id="@+id/btnVeryfied"/>
+
+            <TextView
+                android:id="@+id/resentOTP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OTP chưa được gửi? Gửi lại"
+                android:layout_below="@id/btnVeryfied"
+                android:layout_margin="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
         </RelativeLayout>
 
     </RelativeLayout>
