@@ -64,6 +64,7 @@ public class LoginOptionActivity extends AppCompatActivity {
                         .requestEmail()
                         .build();
         googleSignInClient = GoogleSignIn.getClient(this,gso);
+        Log.d(TAG, "onCreate: googleSignInClient" +gso+"\n"+googleSignInClient);
         binding.close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,7 +229,6 @@ public class LoginOptionActivity extends AppCompatActivity {
                                 startActivity(new Intent(LoginOptionActivity.this, MainActivity.class));
                                 finishAffinity();
                             }
-
 
                         }
 

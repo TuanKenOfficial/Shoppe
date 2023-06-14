@@ -120,11 +120,15 @@ public class LoginPhoneActivity extends AppCompatActivity {
         Log.d(TAG, "updateData: phoneNumberWithCode: "+phoneNumberWithCode);
 
 
+
         if (phoneNumber.isEmpty()){
             Utils.toastyInfo(LoginPhoneActivity.this,"Số điện thoại đang trống");
         }
-        else if (phoneNumber.length()<10){
-            Utils.toastyInfo(LoginPhoneActivity.this,"Số điện thoại phải 10 số trở lên, nếu ở Việt Nam là 10 số");
+        else if (phoneNumber.length()<9){
+            Utils.toastyInfo(LoginPhoneActivity.this,"Số điện thoại phải 9 số trở lên, cộng với đầu +84 hoặc nhập 10 số");
+        }
+        else if (phoneNumber.length()>10){
+            Utils.toastyInfo(LoginPhoneActivity.this,"Số điện thoại không lớn hơn 10 số");
         }
         else {
             startPhone();
@@ -157,8 +161,9 @@ public class LoginPhoneActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
                 Log.d(TAG, "onVerificationCompleted: ");
-                Utils.toastyInfo(LoginPhoneActivity.this,"Thành công VerificationId");
                 signinWithPhone(credential);
+                Utils.toastyInfo(LoginPhoneActivity.this,"Thành công VerificationId");
+
             }
 
             @Override
@@ -227,9 +232,16 @@ public class LoginPhoneActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         if (authResult.getAdditionalUserInfo().isNewUser()){
+                            progressDialog.dismiss();
                             Log.d(TAG, "onSuccess: Đang update dữ liệu và tạo tài khoản");
                             Utils.toastySuccess(LoginPhoneActivity.this, "Đang update dữ liệu");
                             updateDatabase();
+                        }
+                        else {
+                            progressDialog.dismiss();
+                            Log.d(TAG, "onSuccess: Tài khoản đã có");
+                            Utils.toastySuccess(LoginPhoneActivity.this, "Đang update dữ liệu");
+                            startActivity(new Intent(LoginPhoneActivity.this, MainActivity.class));
                         }
 
                     }

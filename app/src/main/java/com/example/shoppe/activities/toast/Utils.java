@@ -1,7 +1,11 @@
 package com.example.shoppe.activities.toast;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
 
@@ -22,6 +26,14 @@ public class Utils {
     }
     public static  long getTimestamp(){
         return System.currentTimeMillis();
+    }
+
+    public static String formatTimestampDate(Long timestamp){
+        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+        calendar.setTimeInMillis(timestamp);
+
+        String date = DateFormat.format("dd/MM/yyyy",calendar).toString();
+        return date;
     }
 
 
