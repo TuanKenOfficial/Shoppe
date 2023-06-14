@@ -7,13 +7,16 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.example.shoppe.R;
+import com.example.shoppe.Users;
 import com.example.shoppe.activities.LoginOptionActivity;
+import com.example.shoppe.activities.ProfileEditActivity;
 import com.example.shoppe.activities.toast.Utils;
 import com.example.shoppe.databinding.FragmentProfileBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,9 +25,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
 
+    private static final String TAG ="ProfileFragment";
 
     private FragmentProfileBinding binding;
 
@@ -54,6 +59,13 @@ public class ProfileFragment extends Fragment {
                 getActivity().finishAffinity();
             }
         });
+        binding.editprofileCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, ProfileEditActivity.class));
+                getActivity().finishAffinity();
+            }
+        });
 
         loadMyInfo();
 
@@ -66,6 +78,7 @@ public class ProfileFragment extends Fragment {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Users user = snapshot.getValue(Users.class);
                         String name = ""+snapshot.child("name").getValue();
                         String email = ""+snapshot.child("email").getValue();
                         String dob = ""+snapshot.child("dob").getValue();
@@ -109,11 +122,16 @@ public class ProfileFragment extends Fragment {
                         }
 
                         //hình ảnh profile
-                        Glide.with(mContext)
-                                .load(profileImageUrl)
-                                .centerCrop()
-                                .placeholder(R.drawable.edituser)
-                                .into(binding.profileIv);
+                        try {
+                            Glide.with(mContext)
+                                    .load(profileImageUrl)
+                                    .placeholder(R.drawable.edituser)
+                                    .into(binding.profileIv);
+                        }
+                        catch (Exception e){
+                            Log.d(TAG, "onDataChange: "+e);
+                        }
+
                     }
 
                     @Override
