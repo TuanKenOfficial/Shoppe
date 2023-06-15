@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.example.shoppe.R;
 import com.example.shoppe.Users;
+import com.example.shoppe.activities.ChangePasswordActivity;
 import com.example.shoppe.activities.LoginOptionActivity;
 import com.example.shoppe.activities.ProfileEditActivity;
 import com.example.shoppe.activities.toast.Utils;
@@ -63,6 +64,14 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(mContext, ProfileEditActivity.class));
+                getActivity().finishAffinity();
+            }
+        });
+
+        binding.changePasswordCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, ChangePasswordActivity.class));
                 getActivity().finishAffinity();
             }
         });

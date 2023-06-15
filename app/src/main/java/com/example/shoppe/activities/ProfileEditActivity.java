@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 
 import com.bumptech.glide.Glide;
@@ -36,6 +39,8 @@ import com.example.shoppe.R;
 import com.example.shoppe.Users;
 import com.example.shoppe.activities.toast.Utils;
 import com.example.shoppe.databinding.ActivityProfileEditBinding;
+import com.example.shoppe.databinding.FragmentProfileBinding;
+import com.example.shoppe.fragments.ProfileFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -122,6 +127,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(ProfileEditActivity.this,MainActivity.class));
+//                initFragment();
             }
         });
 
@@ -145,6 +151,22 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         });
     }
+//    //khi activity back sẽ chuyển sang fragment
+//    private void initFragment() {
+//        binding.toolbarRl.setVisibility(View.GONE);
+//        binding.rv.setVisibility(View.GONE);
+//
+//        ProfileFragment firstFragment = new ProfileFragment();
+//
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//
+//        FragmentTransaction ft = fragmentManager.beginTransaction();
+//
+//        ft.replace(R.id.container_body, firstFragment);
+//
+//        ft.commit();
+//
+//    }
 
     private void validate() {
         email = binding.emailEt.getText().toString().trim();
@@ -243,8 +265,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         Utils.toastySuccess(ProfileEditActivity.this, " Update thành công cơ sở dữ liệu Phone");
                         Log.d(TAG, "onSuccess: Thành công");
-                        startActivity(new Intent(ProfileEditActivity.this, MainActivity.class));
-                        finishAffinity();
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

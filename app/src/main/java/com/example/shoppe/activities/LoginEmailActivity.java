@@ -90,6 +90,7 @@ public class LoginEmailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //quên mật khẩu
+                startActivity(new Intent(LoginEmailActivity.this, ForgotPasswordActivity.class));
             }
         });
         
