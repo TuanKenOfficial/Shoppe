@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 
 import com.example.shoppe.R;
@@ -15,7 +14,7 @@ import com.example.shoppe.databinding.ActivityMainBinding;
 import com.example.shoppe.fragments.ChatsFragment;
 import com.example.shoppe.fragments.HomeFragment;
 import com.example.shoppe.fragments.NotificationFragment;
-import com.example.shoppe.fragments.ProfileFragment;
+import com.example.shoppe.fragments.AccountFragment;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     private void showProfileFragment() {
         binding.toolbarTitleTv.setText("Profile");
 
-        ProfileFragment fragment = new ProfileFragment();
+        AccountFragment fragment = new AccountFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(binding.fragmentsFl.getId(), fragment, "ProfileFragment");
         fragmentTransaction.commit();

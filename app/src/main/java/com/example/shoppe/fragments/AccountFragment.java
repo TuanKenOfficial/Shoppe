@@ -1,40 +1,44 @@
 package com.example.shoppe.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
 import com.example.shoppe.R;
 import com.example.shoppe.Users;
 import com.example.shoppe.activities.ChangePasswordActivity;
+import com.example.shoppe.activities.DeleteAccountActivity;
 import com.example.shoppe.activities.LoginOptionActivity;
 import com.example.shoppe.activities.ProfileEditActivity;
 import com.example.shoppe.activities.toast.Utils;
 import com.example.shoppe.databinding.FragmentProfileBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
-public class ProfileFragment extends Fragment {
+public class AccountFragment extends Fragment {
 
     private static final String TAG ="ProfileFragment";
 
     private FragmentProfileBinding binding;
 
-    public ProfileFragment (){
+    private ProgressDialog progressDialog;
+
+    public AccountFragment(){
         //contrustor
     }
     private Context mContext;
@@ -52,6 +56,11 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(LayoutInflater.from(mContext), container, false);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        progressDialog = new ProgressDialog(mContext);
+        progressDialog.setMessage("Vui lòng đợi trong giây lát");
+        progressDialog.setCanceledOnTouchOutside(false);
+
+        //log out
         binding.logoutCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +69,8 @@ public class ProfileFragment extends Fragment {
                 getActivity().finishAffinity();
             }
         });
+
+        //chỉnh sửa proflie
         binding.editprofileCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +79,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        //đổi mật khẩu
         binding.changePasswordCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,10 +88,29 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        //xác minh tài khoản
+        binding.verifiedCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifiedAccount();
+            }
+        });
+
+        //xoá tài khoản
+        binding.deleteAccountCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, DeleteAccountActivity.class));
+                getActivity().finishAffinity();
+            }
+        });
+
         loadMyInfo();
 
         return binding.getRoot();
     }
+
+
 
     private void loadMyInfo() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
@@ -120,13 +151,16 @@ public class ProfileFragment extends Fragment {
                         if(userType.equals("Email")){
                             boolean isVerified = firebaseAuth.getCurrentUser().isEmailVerified();
                             if(isVerified){
+                                binding.verifiedCv.setVisibility(View.GONE);
                                 binding.verifiedTv.setText("Đã xác minh");
                             }
                             else {
+                                binding.verifiedCv.setVisibility(View.VISIBLE);
                                 binding.verifiedTv.setText("Chưa xác minh");
                             }
                         }
                         else {
+                            binding.verifiedCv.setVisibility(View.GONE);
                             binding.verifiedTv.setText("Đã xác minh");
                         }
 
@@ -146,6 +180,30 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
+                    }
+                });
+    }
+    private void verifiedAccount() {
+        Log.d(TAG, "verifiedAccount: ");
+        progressDialog.setMessage("Xác minh tài khoản email");
+        progressDialog.show();
+
+        firebaseAuth.getCurrentUser().sendEmailVerification()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(TAG, "onSuccess: Send");
+                        progressDialog.dismiss();
+                        Utils.toastySuccess(mContext,"Xác minh thành công");
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onSuccess: Send");
+                        progressDialog.dismiss();
+                        Utils.toastySuccess(mContext,"Thất bại: "+e);
                     }
                 });
     }

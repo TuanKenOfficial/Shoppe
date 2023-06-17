@@ -2,22 +2,17 @@ package com.example.shoppe.activities;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -25,22 +20,14 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 
 import com.bumptech.glide.Glide;
 import com.example.shoppe.R;
-import com.example.shoppe.Users;
 import com.example.shoppe.activities.toast.Utils;
 import com.example.shoppe.databinding.ActivityProfileEditBinding;
-import com.example.shoppe.databinding.FragmentProfileBinding;
-import com.example.shoppe.fragments.ProfileFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -56,7 +43,6 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,15 +61,6 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     private static final String TAG = "PROFILE_EDIT_TAG";
 
-
-    //xử lí profile ảnh
-    private static final int CAMERA_REQUEST_CODE = 200;
-    private static final int STORAGE_REQUEST_CODE = 300;
-    //image pick constants
-    private static final int IMAGE_PICK_GALLERY_CODE = 400;
-    private static final int IMAGE_PICK_CAMERA_CODE = 500;
-    private String[] cameraPermissions;
-    private String[] storagePermissions;
     //image picked uri
     private Uri image_uri;
     private String imageUrl = "" ;
@@ -117,9 +94,6 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         //load tất cả hồ sơ profile
         loadUserInfo();
-        //init permissions array
-        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
 
         //handle click, button back
