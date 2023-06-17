@@ -236,25 +236,50 @@ public class ProfileEditActivity extends AppCompatActivity {
         long timestamp = Utils.getTimestamp();
         HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put("name",""+name);
-        hashMap.put("email",""+email);
         hashMap.put("dob",""+dob);
-        hashMap.put("userType","Email");
         hashMap.put("typringTo","");
         hashMap.put("timestamp",timestamp);
         hashMap.put("onlineStatus",true);
         hashMap.put("uid", registerUserUid);
-        hashMap.put("password",password);
+
+        Log.d(TAG, "uploadProfileDb: ");
+        Log.d(TAG, "uploadProfileDb: name:"+name);
+        Log.d(TAG, "uploadProfileDb: dob"+dob);
+        Log.d(TAG, "uploadProfileDb: timestamp"+timestamp);
+        Log.d(TAG, "uploadProfileDb: uid"+registerUserUid);
+
         if (imageUrl != null){
             hashMap.put("profileImageUrl",""+imageUrl);
+            Log.d(TAG, "uploadProfileDb: profileImageUrl"+imageUrl);
         }
 
-
-        if (mUserType.equalsIgnoreCase("Phone")){
-            hashMap.put("email",email);
-        }
-        else if (mUserType.equalsIgnoreCase("Email") || mUserType.equalsIgnoreCase("Google")) {
+        if(mUserType.equalsIgnoreCase("Google")){
+            hashMap.put("userType","Google");
+            String registerUserEmail = firebaseAuth.getCurrentUser().getEmail();
+            hashMap.put("email",registerUserEmail);
             hashMap.put("phoneCode",""+phoneCode);
             hashMap.put("phoneNumber",""+phoneNumber);
+            Log.d(TAG, "uploadProfileDb: "+registerUserEmail);
+            Log.d(TAG, "uploadProfileDb: "+phoneCode);
+            Log.d(TAG, "uploadProfileDb: "+phoneNumber);
+        }
+        else if(mUserType.equalsIgnoreCase("Email")){
+            hashMap.put("userType","Email");
+            hashMap.put("email", email);
+            hashMap.put("phoneCode",""+phoneCode);
+            hashMap.put("phoneNumber",""+phoneNumber);
+            Log.d(TAG, "uploadProfileDb: "+email);
+            Log.d(TAG, "uploadProfileDb: "+phoneCode);
+            Log.d(TAG, "uploadProfileDb: "+phoneNumber);
+        }
+        else if(mUserType.equalsIgnoreCase("Phone")){
+            hashMap.put("userType","Phone");
+            hashMap.put("email", email);
+            hashMap.put("phoneCode",""+phoneCode);
+            hashMap.put("phoneNumber",""+phoneNumber);
+            Log.d(TAG, "uploadProfileDb: "+email);
+            Log.d(TAG, "uploadProfileDb: "+phoneCode);
+            Log.d(TAG, "uploadProfileDb: "+phoneNumber);
         }
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
         databaseReference.child(firebaseAuth.getUid())

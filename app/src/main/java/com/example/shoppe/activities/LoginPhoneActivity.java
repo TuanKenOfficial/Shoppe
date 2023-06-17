@@ -190,21 +190,6 @@ public class LoginPhoneActivity extends AppCompatActivity {
             }
         };
     }
-
-    private void verifyPhone(String verificationId, String otp) {
-        Log.d(TAG, "verifyPhone: verificationId: "+verificationId);
-        Log.d(TAG, "verifyPhone: otp: "+otp);
-
-        progressDialog.setMessage("Xác thực OTP");
-        progressDialog.show();
-
-        PhoneAuthCredential credential =PhoneAuthProvider.getCredential(verificationId,otp);
-        FirebaseAuth.getInstance().signInWithCredential(credential);
-        signinWithPhone(credential);
-
-
-
-    }
     private void resentOTP(PhoneAuthProvider.ForceResendingToken token) {
 
         Log.d(TAG, "resentOTP: resendToke: "+token);
@@ -222,6 +207,19 @@ public class LoginPhoneActivity extends AppCompatActivity {
         PhoneAuthProvider.verifyPhoneNumber(options);
 
     }
+
+    private void verifyPhone(String verificationId, String otp) {
+        Log.d(TAG, "verifyPhone: verificationId: "+verificationId);
+        Log.d(TAG, "verifyPhone: otp: "+otp);
+
+        progressDialog.setMessage("Xác thực OTP");
+        progressDialog.show();
+
+        PhoneAuthCredential credential =PhoneAuthProvider.getCredential(verificationId,otp);
+        signinWithPhone(credential);
+
+    }
+
     private void signinWithPhone(PhoneAuthCredential credential) {
         Log.d(TAG, "signinWithPhone: ");
         progressDialog.setMessage("Đăng nhập số điện thoại");
