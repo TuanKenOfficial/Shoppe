@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.shoppe.R;
-import com.example.shoppe.Users;
+import com.example.shoppe.models.Users;
 import com.example.shoppe.activities.ChangePasswordActivity;
 import com.example.shoppe.activities.DeleteAccountActivity;
 import com.example.shoppe.activities.LoginOptionActivity;

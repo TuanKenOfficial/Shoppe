@@ -10,6 +10,26 @@ import java.util.Locale;
 import es.dmoral.toasty.Toasty;
 
 public class Utils {
+
+    public static final String AD_STATUS_AVAILABLE="Có sẵn";
+    public static final String AD_STATUS_SOLD="Đã bán";
+
+    public static final String[] categories = {
+            "Điện thoại",
+            "Máy tính/Laptop",
+            "Xe cộ",
+            "Nội thất & Trang trí nhà cửa",
+            "Thời trang & Làm đẹp",
+            "Sách",
+            "Các môn thể thao",
+            "Động vật",
+            "Nông nghiệp",
+            "Trái cây & Hoa quả",
+            "Các doanh nghiệp",
+            "Thể loại khác",
+    };
+
+    public static final String[] conditions ={"Mới", "Đã sử dụng","Đã tân trang"};
     public static  void toast(Context context, String message){
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }

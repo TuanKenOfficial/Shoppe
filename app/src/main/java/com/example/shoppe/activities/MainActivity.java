@@ -1,20 +1,21 @@
 package com.example.shoppe.activities;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-
 import com.example.shoppe.R;
 import com.example.shoppe.activities.toast.Utils;
 import com.example.shoppe.databinding.ActivityMainBinding;
+import com.example.shoppe.fragments.AccountFragment;
 import com.example.shoppe.fragments.ChatsFragment;
 import com.example.shoppe.fragments.HomeFragment;
 import com.example.shoppe.fragments.NotificationFragment;
-import com.example.shoppe.fragments.AccountFragment;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -96,6 +97,14 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
 
+            }
+        });
+
+        binding.sellFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, AdCreateActivity.class));
+                finishAffinity();
             }
         });
     }

@@ -75,7 +75,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
             public void onSuccess(Void unused) {
 
                 progressDialog.setMessage("Xóa tài khoản user Ads");
-
+                //Xóa tài khoản user quảng cáo, hiện tại chưa làm việc tới nó nẽ lưu Db->Ads->AdsId
                 DatabaseReference refAd = FirebaseDatabase.getInstance().getReference("Ads");
                 refAd.orderByChild("uid").equalTo(myUid)
                         .addListenerForSingleValueEvent(new ValueEventListener() {

@@ -1,4 +1,4 @@
-package com.example.shoppe;
+package com.example.shoppe.models;
 
 public class Users {
     private String email;
