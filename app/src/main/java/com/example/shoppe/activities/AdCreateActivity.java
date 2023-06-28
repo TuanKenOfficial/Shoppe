@@ -251,13 +251,17 @@ public class AdCreateActivity extends AppCompatActivity {
                             if(uriTask.isSuccessful()){
 
                                 /*Bị lỗi khúc này*/
-                                DatabaseReference refAd = FirebaseDatabase.getInstance().getReference("Ads");
+
                                 HashMap<String,Object> hashMap = new HashMap<>();
+                                hashMap.put("idAds",modelImagePicked.getImageUri());
                                 hashMap.put("imageUrl",uploadImageUrl);
 
-                                Log.d(TAG, "onSuccess: "+uploadImageUrl);
+                                Log.d(TAG, "onSuccess: imageUrl "+uploadImageUrl);
+                                Log.d(TAG, "onSuccess: idAds "+modelImagePicked.getImageUri());
 
-                                refAd.updateChildren(hashMap);
+                                DatabaseReference refAd = FirebaseDatabase.getInstance().getReference("Ads");
+                                refAd.child(idAds).child("Image").child(imageName).updateChildren(hashMap);
+
                                 Log.d(TAG, "onSuccess: reference" +refAd);
                                 Utils.toastySuccess(AdCreateActivity.this,"Thành công" +refAd);
                             }
