@@ -342,69 +342,9 @@ public class AdCreateActivity extends AppCompatActivity {
                     public void onSuccess(Void unused) {
                         Log.d(TAG, "onSuccess: quảng cáo được phát hành");
                         Log.d(TAG, "uploadImagesStorage: ");
-                        for (int i=0; i<imagePickedArrayList.size(); i++){
-                            ModelImagePicked modelImagePicked = imagePickedArrayList.get(i);
 
-                            String imageName = modelImagePicked.getId();
-                            String filePathName = "Ads/"+imageName;
+                        uploadImageUrl(keyId); //lấy theo Id Ads
 
-
-                            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathName);
-                            int imageIndexForProgress = i+1;
-
-                            Log.d(TAG, "uploadImagesStorage: "+imageName);
-                            Log.d(TAG, "uploadImagesStorage: "+filePathName);
-                            Log.d(TAG, "uploadImagesStorage: "+imageIndexForProgress);
-
-                            storageReference.putFile(modelImagePicked.getImageUri())
-                                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                                            double progress = (100.0 * snapshot.getBytesTransferred())/ snapshot.getTotalByteCount();
-
-                                            String message = "Uploading "+imageIndexForProgress +" of "+ imagePickedArrayList.size() + "hình ảnh...\n tiến trình "
-                                                    + (int)progress +"%";
-                                            progressDialog.setMessage(message);
-                                            progressDialog.show();
-                                        }
-                                    })
-                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                            Log.d(TAG, "onSuccess: ");
-
-                                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                                            while (!uriTask.isSuccessful());
-                                            String uploadImageUrl = uriTask.getResult().toString();
-
-                                            if(uriTask.isSuccessful()){
-                                                HashMap <String,Object> hashMap = new HashMap<>();
-                                                if (uploadImageUrl != null){
-                                                    hashMap.put("imageUrl",""+uploadImageUrl);
-                                                    hashMap.put("idImageAd",""+modelImagePicked.getImageUri());
-                                                    Log.d(TAG, "UploadImageStorageUrl: imageUrl: "+uploadImageUrl);
-
-                                                }
-                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Ads");
-                                                databaseReference.child(keyId).child("Images").child(imageName)
-                                                        .updateChildren(hashMap);
-                                                startActivity(new Intent(AdCreateActivity.this,MainActivity.class));
-
-                                            }
-                                            progressDialog.dismiss();
-
-
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.d(TAG, "onFailure: Lỗi",e);
-                                            Utils.toastyError(AdCreateActivity.this,"Lỗi: "+e);
-                                            progressDialog.dismiss();
-                                        }
-                                    });
-                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -417,6 +357,75 @@ public class AdCreateActivity extends AppCompatActivity {
                 });
 
 
+    }
+
+    private void uploadImageUrl(String keyId) {
+        for (int i=0; i<imagePickedArrayList.size(); i++){
+            ModelImagePicked modelImagePicked = imagePickedArrayList.get(i);
+
+            String imageName = modelImagePicked.getId();
+            String filePathName = "Ads/"+imageName;
+
+
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathName);
+            int imageIndexForProgress = i+1;
+
+            Log.d(TAG, "uploadImagesStorage: "+imageName);
+            Log.d(TAG, "uploadImagesStorage: "+filePathName);
+            Log.d(TAG, "uploadImagesStorage: "+imageIndexForProgress);
+
+            storageReference.putFile(modelImagePicked.getImageUri())
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                            double progress = (100.0 * snapshot.getBytesTransferred())/ snapshot.getTotalByteCount();
+
+                            String message = "Uploading "+imageIndexForProgress +" of "+ imagePickedArrayList.size() + "hình ảnh...\n tiến trình "
+                                    + (int)progress +"%";
+                            progressDialog.setMessage(message);
+                            progressDialog.show();
+                        }
+                    })
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Log.d(TAG, "onSuccess: ");
+
+                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                            while (!uriTask.isSuccessful());
+                            String uploadImageUrl = uriTask.getResult().toString();
+
+                            if(uriTask.isSuccessful()){
+                                HashMap <String,Object> hashMap = new HashMap<>();
+                                if (uploadImageUrl != null){
+                                    hashMap.put("imageUrl",""+uploadImageUrl);
+                                    hashMap.put("idImageAd",""+modelImagePicked.getImageUri());
+                                    Log.d(TAG, "UploadImageStorageUrl: imageUrl: "+uploadImageUrl);
+                                    Log.d(TAG, "UploadImageStorageUrl: idImageAd: "+modelImagePicked.getImageUri());
+
+                                }
+
+                                //lấy theo id Ads. Chia cây Ads-IdAd->Images->ImageId->ImageData
+                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Ads");
+                                databaseReference.child(keyId).child("Images").child(imageName)
+                                        .updateChildren(hashMap);
+                                startActivity(new Intent(AdCreateActivity.this,MainActivity.class));
+
+                            }
+                            progressDialog.dismiss();
+
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "onFailure: Lỗi",e);
+                            Utils.toastyError(AdCreateActivity.this,"Lỗi: "+e);
+                            progressDialog.dismiss();
+                        }
+                    });
+        }
     }
 
 }
