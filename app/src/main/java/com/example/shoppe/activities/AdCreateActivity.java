@@ -82,6 +82,7 @@ public class AdCreateActivity extends AppCompatActivity {
         binding.conditionEt.setAdapter(adapterConditions);
 
         imagePickedArrayList = new ArrayList<>();
+
         loadImages();
 
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
@@ -107,180 +108,6 @@ public class AdCreateActivity extends AppCompatActivity {
 
 
     }
-
-    private String brand="";
-    private String category="";
-    private String condition="";
-    private String address="";
-    private String price="";
-    private String title="";
-    private String description="";
-    private double latitude=0;
-    private double longtide=0;
-
-    private void validate() {
-        brand = binding.brandEt.getText().toString().trim();
-        category = binding.categoryEt.getText().toString().trim();
-        condition = binding.conditionEt.getText().toString().trim();
-        address = binding.locationEt.getText().toString().trim();
-        price = binding.priceEt.getText().toString().trim();
-        title = binding.titleEt.getText().toString().trim();
-        description = binding.descriptionsEt.getText().toString().trim();
-
-
-        if (brand.isEmpty()){
-            binding.brandEt.setError("Nhập thương hiệu của bạn");
-            binding.brandEt.requestFocus();
-        }
-        else if (category.isEmpty()){
-            binding.categoryEt.setError("Bạn chưa chọn loại");
-            binding.categoryEt.requestFocus();
-        }
-        else if (condition.isEmpty()){
-            binding.conditionEt.setError("Bạn chưa chọn tình trạng");
-            binding.conditionEt.requestFocus();
-        }
-        else if (title.isEmpty()){
-            binding.titleEt.setError("Bạn chưa nhập tiêu đề");
-            binding.titleEt.requestFocus();
-        }
-
-        else if (description.isEmpty()){
-            binding.descriptionsEt.setError("Bạn chưa mô tả sản phẩm");
-            binding.descriptionsEt.requestFocus();
-        }
-        else if (price.isEmpty()){
-            binding.priceEt.setError("Bạn chưa nhập giá cho sản phẩm");
-            binding.priceEt.requestFocus();
-        }
-        else if (imagePickedArrayList.isEmpty()){
-            Utils.toastyInfo(this,"Chọn ít nhất trên hình ảnh");
-        }
-        else{
-            postAd();
-        }
-    }
-
-    private void postAd() {
-        Log.d(TAG, "postAd: ");
-
-        progressDialog.setMessage("Đang upload quảng cáo");
-        progressDialog.show();
-
-        long timestamp = Utils.getTimestamp();
-        String uidAd = firebaseAuth.getUid();
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Ads");
-        String idAds = reference.push().getKey();
-
-
-        HashMap<String,Object> hashMap = new HashMap<>();
-        hashMap.put("id",""+idAds);
-        hashMap.put("uid",firebaseAuth.getUid());
-        hashMap.put("brand",brand);
-        hashMap.put("category",category);
-        hashMap.put("condition",condition);
-        hashMap.put("address",address);
-        hashMap.put("price",price);
-        hashMap.put("title",title);
-        hashMap.put("description",description);
-        hashMap.put("timestamp",timestamp);
-        hashMap.put("latitude",latitude);
-        hashMap.put("longtide",longtide);
-        hashMap.put("status",Utils.AD_STATUS_AVAILABLE);
-
-
-        reference.child(idAds)
-                .setValue(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d(TAG, "onSuccess: quảng cáo được phát hành");
-                        uploadImagesStorage(idAds);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onFailure: ",e);
-                        progressDialog.dismiss();
-                        Utils.toastyError(AdCreateActivity.this,"Lỗi: " +e);
-                    }
-                });
-
-
-    }
-
-    private void uploadImagesStorage(String idAds) {
-        Log.d(TAG, "uploadImagesStorage: ");
-        for (int i=0; i<imagePickedArrayList.size(); i++){
-            ModelImagePicked modelImagePicked = imagePickedArrayList.get(i);
-
-            String imageName = modelImagePicked.getId();
-            String filePathName = "Ads/"+imageName;
-
-
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathName);
-            int imageIndexForProgress = i+1;
-
-            Log.d(TAG, "uploadImagesStorage: "+imageName);
-            Log.d(TAG, "uploadImagesStorage: "+filePathName);
-            Log.d(TAG, "uploadImagesStorage: "+imageIndexForProgress);
-
-            storageReference.putFile(modelImagePicked.getImageUri())
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                            double progress = (100.0 * snapshot.getBytesTransferred())/ snapshot.getTotalByteCount();
-
-                            String message = "Uploading "+imageIndexForProgress +" of "+ imagePickedArrayList.size() + "hình ảnh...\n tiến trình "
-                                    + (int)progress +"%";
-                            progressDialog.setMessage(message);
-                            progressDialog.show();
-                        }
-                    })
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.d(TAG, "onSuccess: ");
-
-                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isSuccessful());
-                            Uri uploadImageUrl = uriTask.getResult();
-
-                            if(uriTask.isSuccessful()){
-
-                                /*Bị lỗi khúc này*/
-
-                                HashMap<String,Object> hashMap = new HashMap<>();
-                                hashMap.put("idAds",modelImagePicked.getImageUri());
-                                hashMap.put("imageUrl",uploadImageUrl);
-
-                                Log.d(TAG, "onSuccess: imageUrl "+uploadImageUrl);
-                                Log.d(TAG, "onSuccess: idAds "+modelImagePicked.getImageUri());
-
-                                DatabaseReference refAd = FirebaseDatabase.getInstance().getReference("Ads");
-                                refAd.child(idAds).child("Image").child(imageName).updateChildren(hashMap);
-
-                                Log.d(TAG, "onSuccess: reference" +refAd);
-                                Utils.toastySuccess(AdCreateActivity.this,"Thành công" +refAd);
-                            }
-                            progressDialog.dismiss();
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "onFailure: Lỗi",e);
-                            Utils.toastyError(AdCreateActivity.this,"Lỗi: "+e);
-                            progressDialog.dismiss();
-                        }
-                    });
-        }
-    }
-
-
     private void loadImages() {
         Log.d(TAG, "loadImages: ");
         adapterImagePicked = new AdapterImagePicked(this, imagePickedArrayList);
@@ -321,6 +148,7 @@ public class AdCreateActivity extends AppCompatActivity {
             }
         });
     }
+
     private ActivityResultLauncher<String[]> requestCameraPemissions = registerForActivityResult(
             new ActivityResultContracts.RequestMultiplePermissions(),
             new ActivityResultCallback<Map<String,Boolean>>(){
@@ -424,4 +252,171 @@ public class AdCreateActivity extends AppCompatActivity {
                 }
             }
     );
+
+    private String brand="";
+    private String category="";
+    private String condition="";
+    private String address="";
+    private String price="";
+    private String title="";
+    private String description="";
+    private double latitude=0;
+    private double longtide=0;
+
+    private void validate() {
+        brand = binding.brandEt.getText().toString().trim();
+        category = binding.categoryEt.getText().toString().trim();
+        condition = binding.conditionEt.getText().toString().trim();
+        address = binding.locationEt.getText().toString().trim();
+        price = binding.priceEt.getText().toString().trim();
+        title = binding.titleEt.getText().toString().trim();
+        description = binding.descriptionsEt.getText().toString().trim();
+
+
+        if (brand.isEmpty()){
+            binding.brandEt.setError("Nhập thương hiệu của bạn");
+            binding.brandEt.requestFocus();
+        }
+        else if (category.isEmpty()){
+            binding.categoryEt.setError("Bạn chưa chọn loại");
+            binding.categoryEt.requestFocus();
+        }
+        else if (condition.isEmpty()){
+            binding.conditionEt.setError("Bạn chưa chọn tình trạng");
+            binding.conditionEt.requestFocus();
+        }
+        else if (title.isEmpty()){
+            binding.titleEt.setError("Bạn chưa nhập tiêu đề");
+            binding.titleEt.requestFocus();
+        }
+
+        else if (description.isEmpty()){
+            binding.descriptionsEt.setError("Bạn chưa mô tả sản phẩm");
+            binding.descriptionsEt.requestFocus();
+        }
+        else if (price.isEmpty()){
+            binding.priceEt.setError("Bạn chưa nhập giá cho sản phẩm");
+            binding.priceEt.requestFocus();
+        }
+        else if (imagePickedArrayList.isEmpty()){
+            Utils.toastyInfo(this,"Chọn ít nhất trên hình ảnh");
+        }
+        else{
+            postAd();
+        }
+    }
+
+    private void postAd() {
+        Log.d(TAG, "postAd: ");
+
+        progressDialog.setMessage("Đang upload quảng cáo");
+        progressDialog.show();
+
+        long timestamp = Utils.getTimestamp();
+        String uidAd = firebaseAuth.getUid();
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Ads");
+        String keyId = reference.push().getKey();
+
+
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("id",""+keyId);
+        hashMap.put("uid",firebaseAuth.getUid());
+        hashMap.put("brand",brand);
+        hashMap.put("category",category);
+        hashMap.put("condition",condition);
+        hashMap.put("address",address);
+        hashMap.put("price",price);
+        hashMap.put("title",title);
+        hashMap.put("description",description);
+        hashMap.put("timestamp",timestamp);
+        hashMap.put("latitude",latitude);
+        hashMap.put("longtide",longtide);
+        hashMap.put("status",Utils.AD_STATUS_AVAILABLE);
+
+
+        reference.child(keyId)
+                .setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(TAG, "onSuccess: quảng cáo được phát hành");
+                        Log.d(TAG, "uploadImagesStorage: ");
+                        for (int i=0; i<imagePickedArrayList.size(); i++){
+                            ModelImagePicked modelImagePicked = imagePickedArrayList.get(i);
+
+                            String imageName = modelImagePicked.getId();
+                            String filePathName = "Ads/"+imageName;
+
+
+                            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathName);
+                            int imageIndexForProgress = i+1;
+
+                            Log.d(TAG, "uploadImagesStorage: "+imageName);
+                            Log.d(TAG, "uploadImagesStorage: "+filePathName);
+                            Log.d(TAG, "uploadImagesStorage: "+imageIndexForProgress);
+
+                            storageReference.putFile(modelImagePicked.getImageUri())
+                                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                                            double progress = (100.0 * snapshot.getBytesTransferred())/ snapshot.getTotalByteCount();
+
+                                            String message = "Uploading "+imageIndexForProgress +" of "+ imagePickedArrayList.size() + "hình ảnh...\n tiến trình "
+                                                    + (int)progress +"%";
+                                            progressDialog.setMessage(message);
+                                            progressDialog.show();
+                                        }
+                                    })
+                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            Log.d(TAG, "onSuccess: ");
+
+                                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                            while (!uriTask.isSuccessful());
+                                            String uploadImageUrl = uriTask.getResult().toString();
+
+                                            if(uriTask.isSuccessful()){
+                                                HashMap <String,Object> hashMap = new HashMap<>();
+                                                if (uploadImageUrl != null){
+                                                    hashMap.put("imageUrl",""+uploadImageUrl);
+                                                    hashMap.put("idImageAd",""+modelImagePicked.getImageUri());
+                                                    Log.d(TAG, "UploadImageStorageUrl: imageUrl: "+uploadImageUrl);
+
+                                                }
+                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Ads");
+                                                databaseReference.child(keyId).child("Images").child(imageName)
+                                                        .updateChildren(hashMap);
+                                                startActivity(new Intent(AdCreateActivity.this,MainActivity.class));
+
+                                            }
+                                            progressDialog.dismiss();
+
+
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d(TAG, "onFailure: Lỗi",e);
+                                            Utils.toastyError(AdCreateActivity.this,"Lỗi: "+e);
+                                            progressDialog.dismiss();
+                                        }
+                                    });
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onFailure: ",e);
+                        progressDialog.dismiss();
+                        Utils.toastyError(AdCreateActivity.this,"Lỗi: " +e);
+                    }
+                });
+
+
+    }
+
 }
