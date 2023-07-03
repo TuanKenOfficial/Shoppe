@@ -92,6 +92,7 @@ public class AdCreateActivity extends AppCompatActivity {
             }
         });
 
+        //chọn hình ảnh
         binding.toolbarImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +100,16 @@ public class AdCreateActivity extends AppCompatActivity {
             }
         });
 
+        //location
+        binding.locationEt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdCreateActivity.this,LocationPickerActivity.class);
+                locationPickerActivityResultLauncher.launch(intent);
+            }
+        });
+
+        //xử lý post
         binding.postAdBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +118,36 @@ public class AdCreateActivity extends AppCompatActivity {
         });
 
 
+
+
     }
+
+    private ActivityResultLauncher<Intent> locationPickerActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if(result.getResultCode() == Activity.RESULT_OK){
+                        Intent data = result.getData();
+
+                        if(data != null){
+                            latitude = data.getDoubleExtra("latitude",0.0);
+                            longitude = data.getDoubleExtra("longitude",0.0);
+                            address = data.getStringExtra("address");
+                            Log.d(TAG, "onActivityResult: latitude"+latitude);
+                            Log.d(TAG, "onActivityResult: longitude"+longitude);
+                            Log.d(TAG, "onActivityResult: address"+address);
+
+                            binding.locationEt.setText(address);
+                        }
+                        else {
+                            Log.d(TAG, "onActivityResult: Lỗi");
+                            Utils.toastyError(AdCreateActivity.this,"Lỗi");
+                        }
+                    }
+                }
+            }
+    );
     private void loadImages() {
         Log.d(TAG, "loadImages: ");
         adapterImagePicked = new AdapterImagePicked(this, imagePickedArrayList);
@@ -261,7 +301,7 @@ public class AdCreateActivity extends AppCompatActivity {
     private String title="";
     private String description="";
     private double latitude=0;
-    private double longtide=0;
+    private double longitude=0;
 
     private void validate() {
         brand = binding.brandEt.getText().toString().trim();
@@ -331,7 +371,7 @@ public class AdCreateActivity extends AppCompatActivity {
         hashMap.put("description",description);
         hashMap.put("timestamp",timestamp);
         hashMap.put("latitude",latitude);
-        hashMap.put("longtide",longtide);
+        hashMap.put("longitude",longitude);
         hashMap.put("status",Utils.AD_STATUS_AVAILABLE);
 
 

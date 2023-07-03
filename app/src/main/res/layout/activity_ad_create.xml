@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/toolbarTitleTv"
             android:layout_centerInParent="true"
-            android:text="Tạo quảng cáo"
+            android:text="Tạo sản phẩm quảng cáo"
             style="@style/TextAppearance.MaterialComponents.Body1"/>
 
         <ImageButton
